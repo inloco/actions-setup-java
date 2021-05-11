@@ -23375,7 +23375,7 @@ function run() {
                 return;
             }
             const proxyUrl = new url.URL(proxyUrlEnv);
-            const proxyHost = proxyUrl.host;
+            const proxyHost = proxyUrl.hostname;
             const proxyPort = proxyUrl.port;
             core.exportVariable('GRADLE_OPTS', `${process.env.GRADLE_OPTS} ` +
                 `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +

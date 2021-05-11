@@ -46,7 +46,7 @@ export default async function run() {
     }
 
     const proxyUrl = new url.URL(proxyUrlEnv);
-    const proxyHost = proxyUrl.host;
+    const proxyHost = proxyUrl.hostname;
     const proxyPort = proxyUrl.port;
 
     core.exportVariable('GRADLE_OPTS',
