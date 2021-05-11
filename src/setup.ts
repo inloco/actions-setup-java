@@ -39,18 +39,20 @@ export default async function run() {
       core.error("Error reading custom certificates");
     }
 
-    const proxyUrl = process.env.HTTP_PROXY;
-    if (proxyUrl === undefined || proxyUrl === '') {
+    var proxyUrlEnv = process.env.HTTP_PROXY;
+    if (proxyUrlEnv === undefined || proxyUrlEnv  === '') {
       core.warning('HTTP_PROXY not defnied');
       return;
     }
 
-    const proxyPort = new url.URL(proxyUrl).port;
+    const proxyUrl = new url.URL(proxyUrlEnv);
+    const proxyHost = proxyUrl.host;
+    const proxyPort = proxyUrl.port;
 
     core.exportVariable('GRADLE_OPTS',
       `${process.env.GRADLE_OPTS} ` +
-        `-Dhttp.proxyHost=${proxyUrl} -Dhttp.proxyPort=${proxyPort} ` +
-        `-Dhttps.proxyHost=${proxyUrl} -Dhttps.proxyPort=${proxyPort} ` +
+        `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +
+        `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} ` +
         `-Djavax.net.ssl.trustStore=${javaHome}/lib/security/cacerts ` +
         '-Djavax.net.ssl.trustStorePassword=changeit'
     );
