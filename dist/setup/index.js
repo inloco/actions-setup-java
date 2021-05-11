@@ -23343,31 +23343,21 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield setup_java_1.default();
-            const javaHome = process.env.JAVA_HOME;
-            if (!javaHome) {
-                core.warning('JAVA_HOME not defined');
-                return;
-            }
-            try {
-                for (const file of yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
-                    console.log(`importing certificate file: ${file}`);
-                    const returnCode = yield exec.exec('keytool', [
-                        '-import',
-                        '-noprompt',
-                        '-trustcacerts',
-                        '-file',
-                        `${CUSTOM_CERTIFICATES_PATH}/${file}`,
-                        '-cacerts',
-                        '-storepass',
-                        'changeit',
-                    ]);
-                    if (returnCode !== 0) {
-                        core.error("Could not import CA to Java's trustStore");
-                    }
+            for (const file of yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
+                console.log(`importing certificate file: ${file}`);
+                const returnCode = yield exec.exec('keytool', [
+                    '-import',
+                    '-noprompt',
+                    '-trustcacerts',
+                    '-file',
+                    `${CUSTOM_CERTIFICATES_PATH}/${file}`,
+                    '-cacerts',
+                    '-storepass',
+                    'changeit',
+                ]);
+                if (returnCode !== 0) {
+                    core.error("Could not import CA to Java's trustStore");
                 }
-            }
-            catch (err) {
-                core.error("Error reading custom certificates");
             }
             var proxyUrlEnv = process.env.HTTP_PROXY;
             if (proxyUrlEnv === undefined || proxyUrlEnv === '') {
@@ -23380,11 +23370,11 @@ function run() {
             core.exportVariable('GRADLE_OPTS', `${process.env.GRADLE_OPTS} ` +
                 `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +
                 `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} ` +
-                `-Djavax.net.ssl.trustStore=${javaHome}/lib/security/cacerts ` +
+                `-Djavax.net.ssl.trustStore=cacerts ` +
                 '-Djavax.net.ssl.trustStorePassword=changeit');
         }
         catch (error) {
-            core.setFailed(error.message);
+            core.setFailed(error);
         }
     });
 }
