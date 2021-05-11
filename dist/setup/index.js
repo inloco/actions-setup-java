@@ -35732,7 +35732,7 @@ function run() {
         }
     });
 }
-run();
+exports.default = run;
 
 
 /***/ }),
