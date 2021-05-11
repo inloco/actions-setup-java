@@ -23349,7 +23349,7 @@ function run() {
                 return;
             }
             try {
-                for (const file in yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
+                for (const file of yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
                     console.log(`importing certificate file: ${file}`);
                     const returnCode = yield exec.exec('keytool', [
                         '-import',

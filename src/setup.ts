@@ -18,7 +18,7 @@ export default async function run() {
     }
 
     try {
-      for (const file in await fs.readdir(CUSTOM_CERTIFICATES_PATH)) {
+      for (const file of await fs.readdir(CUSTOM_CERTIFICATES_PATH)) {
         console.log(`importing certificate file: ${file}`);
         const returnCode = await exec.exec('keytool', [
           '-import',
