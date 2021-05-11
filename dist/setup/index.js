@@ -23336,6 +23336,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const fs_1 = __webpack_require__(747);
+const url = __importStar(__webpack_require__(835));
 const setup_java_1 = __importDefault(__webpack_require__(811));
 const CUSTOM_CERTIFICATES_PATH = '/usr/local/share/ca-certificates';
 function run() {
@@ -23349,12 +23350,11 @@ function run() {
             }
             try {
                 for (const file in yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
+                    console.log(`importing certificate file: ${file}`);
                     const returnCode = yield exec.exec('keytool', [
                         '-import',
                         '-noprompt',
                         '-trustcacerts',
-                        '-alias',
-                        'incogniadependenciescache',
                         '-file',
                         `${file}`,
                         '-cacerts',
@@ -23369,20 +23369,15 @@ function run() {
             catch (err) {
                 core.error("Error reading custom certificates");
             }
-            const proxyHost = process.env.HTTP_PROXY;
-            if (proxyHost === undefined || proxyHost === '') {
+            const proxyUrl = process.env.HTTP_PROXY;
+            if (proxyUrl === undefined || proxyUrl === '') {
                 core.warning('HTTP_PROXY not defnied');
                 return;
             }
-            const proxyHostAndPort = proxyHost.split(":");
-            if (proxyHostAndPort.length != 2) {
-                core.warning('HTTP_PROXY does not include port');
-                return;
-            }
-            const proxyPort = proxyHostAndPort[1];
+            const proxyPort = new url.URL(proxyUrl).port;
             core.exportVariable('GRADLE_OPTS', `${process.env.GRADLE_OPTS} ` +
-                `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +
-                `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} ` +
+                `-Dhttp.proxyHost=${proxyUrl} -Dhttp.proxyPort=${proxyPort} ` +
+                `-Dhttps.proxyHost=${proxyUrl} -Dhttps.proxyPort=${proxyPort} ` +
                 `-Djavax.net.ssl.trustStore=${javaHome}/lib/security/cacerts ` +
                 '-Djavax.net.ssl.trustStorePassword=changeit');
         }

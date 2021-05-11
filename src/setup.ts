@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import {promises as fs} from 'fs';
+import * as url from 'url';
 
 import setup from './setup-java';
 
@@ -18,12 +19,11 @@ export default async function run() {
 
     try {
       for (const file in await fs.readdir(CUSTOM_CERTIFICATES_PATH)) {
+        console.log(`importing certificate file: ${file}`);
         const returnCode = await exec.exec('keytool', [
           '-import',
           '-noprompt',
           '-trustcacerts',
-          '-alias',
-          'incogniadependenciescache',
           '-file',
           `${file}`,
           '-cacerts',
@@ -39,24 +39,18 @@ export default async function run() {
       core.error("Error reading custom certificates");
     }
 
-    const proxyHost = process.env.HTTP_PROXY;
-    if (proxyHost === undefined || proxyHost === '') {
+    const proxyUrl = process.env.HTTP_PROXY;
+    if (proxyUrl === undefined || proxyUrl === '') {
       core.warning('HTTP_PROXY not defnied');
       return;
     }
 
-    const proxyHostAndPort = proxyHost.split(":")
-    if (proxyHostAndPort.length != 2) {
-      core.warning('HTTP_PROXY does not include port');
-      return;
-    }
-
-    const proxyPort = proxyHostAndPort[1];
+    const proxyPort = new url.URL(proxyUrl).port;
 
     core.exportVariable('GRADLE_OPTS',
       `${process.env.GRADLE_OPTS} ` +
-        `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +
-        `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} ` +
+        `-Dhttp.proxyHost=${proxyUrl} -Dhttp.proxyPort=${proxyPort} ` +
+        `-Dhttps.proxyHost=${proxyUrl} -Dhttps.proxyPort=${proxyPort} ` +
         `-Djavax.net.ssl.trustStore=${javaHome}/lib/security/cacerts ` +
         '-Djavax.net.ssl.trustStorePassword=changeit'
     );
