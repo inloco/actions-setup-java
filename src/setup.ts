@@ -25,7 +25,7 @@ export default async function run() {
           '-noprompt',
           '-trustcacerts',
           '-file',
-          `${file}`,
+          `${CUSTOM_CERTIFICATES_PATH}/${file}`,
           '-cacerts',
           '-storepass',
           'changeit',
