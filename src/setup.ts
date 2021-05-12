@@ -42,9 +42,7 @@ export default async function run() {
     core.exportVariable('GRADLE_OPTS',
       `${process.env.GRADLE_OPTS} ` +
         `-Dhttp.proxyHost=${proxyHost} -Dhttp.proxyPort=${proxyPort} ` +
-        `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} ` +
-        `-Djavax.net.ssl.trustStore=cacerts ` +
-        '-Djavax.net.ssl.trustStorePassword=changeit'
+        `-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=${proxyPort} `
     );
   } catch (error) {
     core.setFailed(error);
