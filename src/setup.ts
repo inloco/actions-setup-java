@@ -12,12 +12,12 @@ export default async function run() {
     await setup(); 
 
     const javaCaCertsPaths = [
-      `${process.env.JAVA_HOME}/jre/lib/security/cacerts`, // until java 8
+      `${process.env.JAVA_HOME}/jre/lib/security/cacerts`, // before java 9
       `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9
     ];
 
     var caCertPath = null;
-    for (const possibleCaCertPath in javaCaCertsPaths) {
+    for (const possibleCaCertPath of javaCaCertsPaths) {
       if (fs.existsSync(possibleCaCertPath)) {
         core.debug(`cacerts file found: ${caCertPath}`);
         caCertPath = possibleCaCertPath

@@ -23348,7 +23348,7 @@ function run() {
                 `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9
             ];
             var caCertPath = null;
-            for (const possibleCaCertPath in javaCaCertsPaths) {
+            for (const possibleCaCertPath of javaCaCertsPaths) {
                 if (fs.existsSync(possibleCaCertPath)) {
                     core.debug(`cacerts file found: ${caCertPath}`);
                     caCertPath = possibleCaCertPath;
