@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import {promises as fs} from 'fs';
+import * as fs from 'fs';
 import * as url from 'url';
 
 import setup from './setup-java';
@@ -11,15 +11,34 @@ export default async function run() {
   try {
     await setup(); 
 
-    for (const file of await fs.readdir(CUSTOM_CERTIFICATES_PATH)) {
-      console.log(`importing certificate file: ${file}`);
+    const javaCaCertsPaths = [
+      `${process.env.JAVA_HOME}/jre/lib/security/cacerts`, // until java 8
+      `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9
+    ];
+
+    var caCertPath = null;
+    for (const possibleCaCertPath in javaCaCertsPaths) {
+      if (fs.existsSync(possibleCaCertPath)) {
+        core.debug(`cacerts file found: ${caCertPath}`);
+        caCertPath = possibleCaCertPath
+      }
+    }
+
+    if (!caCertPath) {
+      core.error(`cacerts file not found, searched in ${javaCaCertsPaths}`);
+      return;
+    }
+
+    for (const file of await fs.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
+      core.debug(`importing certificate file: ${file}`);
       const returnCode = await exec.exec('keytool', [
         '-import',
         '-noprompt',
         '-trustcacerts',
         '-file',
         `${CUSTOM_CERTIFICATES_PATH}/${file}`,
-        '-cacerts',
+        '-keystore',
+        `${caCertPath}`,
         '-storepass',
         'changeit',
       ]);

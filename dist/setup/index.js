@@ -23335,7 +23335,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
-const fs_1 = __webpack_require__(747);
+const fs = __importStar(__webpack_require__(747));
 const url = __importStar(__webpack_require__(835));
 const setup_java_1 = __importDefault(__webpack_require__(811));
 const CUSTOM_CERTIFICATES_PATH = '/usr/local/share/ca-certificates';
@@ -23343,15 +23343,31 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield setup_java_1.default();
-            for (const file of yield fs_1.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
-                console.log(`importing certificate file: ${file}`);
+            const javaCaCertsPaths = [
+                `${process.env.JAVA_HOME}/jre/lib/security/cacerts`,
+                `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9
+            ];
+            var caCertPath = null;
+            for (const possibleCaCertPath in javaCaCertsPaths) {
+                if (fs.existsSync(possibleCaCertPath)) {
+                    core.debug(`cacerts file found: ${caCertPath}`);
+                    caCertPath = possibleCaCertPath;
+                }
+            }
+            if (!caCertPath) {
+                core.error(`cacerts file not found, searched in ${javaCaCertsPaths}`);
+                return;
+            }
+            for (const file of yield fs.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {
+                core.debug(`importing certificate file: ${file}`);
                 const returnCode = yield exec.exec('keytool', [
                     '-import',
                     '-noprompt',
                     '-trustcacerts',
                     '-file',
                     `${CUSTOM_CERTIFICATES_PATH}/${file}`,
-                    '-cacerts',
+                    '-keystore',
+                    `${caCertPath}`,
                     '-storepass',
                     'changeit',
                 ]);
