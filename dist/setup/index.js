@@ -23355,7 +23355,7 @@ function run() {
                 }
             }
             if (!caCertPath) {
-                core.error(`cacerts file not found, searched in ${javaCaCertsPaths}`);
+                core.warning(`cacerts file not found, searched in ${javaCaCertsPaths}`);
                 return;
             }
             for (const file of yield fs.promises.readdir(CUSTOM_CERTIFICATES_PATH)) {

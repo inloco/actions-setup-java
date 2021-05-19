@@ -25,7 +25,7 @@ export default async function run() {
     }
 
     if (!caCertPath) {
-      core.error(`cacerts file not found, searched in ${javaCaCertsPaths}`);
+      core.warning(`cacerts file not found, searched in ${javaCaCertsPaths}`);
       return;
     }
 
