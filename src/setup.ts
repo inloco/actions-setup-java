@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import * as io from '@actions/io'
 import * as fs from 'fs';
 import * as url from 'url';
 
@@ -10,6 +11,10 @@ const CUSTOM_CERTIFICATES_PATH = '/usr/local/share/ca-certificates';
 export default async function run() {
   try {
     await setup(); 
+
+    await io.mkdirP(`${process.env.HOME}/.gradle`)
+    fs.appendFileSync(`${process.env.HOME}/.gradle/gradle.properties`,
+      `\norg.gradle.console=plain`)
 
     const javaCaCertsPaths = [
       `${process.env.JAVA_HOME}/jre/lib/security/cacerts`, // before java 9
