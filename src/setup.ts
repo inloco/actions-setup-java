@@ -11,9 +11,6 @@ export default async function run() {
   try {
     await setup(); 
 
-    fs.appendFileSync(`${process.env.HOME}/.gradle/gradle.properties`,
-      `\norg.gradle.console=plain`)
-
     const javaCaCertsPaths = [
       `${process.env.JAVA_HOME}/jre/lib/security/cacerts`, // before java 9
       `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9

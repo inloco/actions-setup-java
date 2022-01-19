@@ -23343,7 +23343,6 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield setup_java_1.default();
-            fs.appendFileSync(`${process.env.HOME}/.gradle/gradle.properties`, `\norg.gradle.console=plain`);
             const javaCaCertsPaths = [
                 `${process.env.JAVA_HOME}/jre/lib/security/cacerts`,
                 `${process.env.JAVA_HOME}/lib/security/cacerts`, // since java 9
