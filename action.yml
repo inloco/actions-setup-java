@@ -19,11 +19,10 @@ runs:
       cache: |
         ${{ inputs.cache ? 'gradle' : null }}
 
-  - name: Set Gradle's console output to 'plain'
+  - name: Disable Gradle daemon and setup console output
     shell: bash
     run: |
-      mkdir -p ~/.gradle
-      printf "\n%s" "org.gradle.console=plain" >> ~/.gradle/gradle.properties
+      echo "GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.console=plain $GRADLE_OPTS" >> $GITHUB_ENV
 
   - name: Cache gradle build
     uses: inloco/actions-cache@HEAD
