@@ -16,20 +16,8 @@ runs:
     with:
       java-version: ${{ inputs.java-version }}
       distribution: ${{ inputs.distribution }}
-      cache: gradle
 
   - name: Disable Gradle daemon and setup console output
     shell: bash
     run: |
       echo "GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.console=plain $GRADLE_OPTS" >> $GITHUB_ENV
-
-  - name: Cache gradle build
-    uses: inloco/actions-cache@HEAD
-    with:
-      path: |
-        **/.gradle
-        **/build
-        !**/build/jib*
-      key: ${{ runner.os }}-action-build-${{ github.sha }}
-      restore-keys: |
-        ${{ runner.os }}-action-build-
