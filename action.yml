@@ -8,22 +8,6 @@ inputs:
   distribution:
     description: "Java distribution. See the list of supported distributions in actions/setup-java's README"
     default: 'adopt'
-  cache:
-    description: 'Whether to enable caching'
-    default: true
-  path:
-    description: 'A list of files, directories, and wildcard patterns to cache and restore'
-    default: |
-      **/.gradle
-      **/build
-      !**/build/jib*
-  key:
-    description: 'An explicit key for restoring and saving the cache'
-    default: ${{ runner.os }}-action-build-${{ github.sha }}
-  restore-keys:
-    description: 'An ordered list of keys to use for restoring the cache if no cache hit occurred for key'
-    default: |
-      ${{ runner.os }}-action-build-
 runs:
   using: composite
   steps:
@@ -45,6 +29,10 @@ runs:
     uses: inloco/actions-cache@HEAD
     if: inputs.cache
     with:
-      path: ${{ inputs.path }}
-      key: ${{ inputs.key }}
-      restore-keys: ${{ inputs.restore-keys }}
+      path: |
+        **/.gradle
+        **/build
+        !**/build/jib*
+      key: ${{ runner.os }}-action-build-${{ github.sha }}
+      restore-keys: |
+        ${{ runner.os }}-action-build-
