@@ -16,8 +16,7 @@ runs:
     with:
       java-version: ${{ inputs.java-version }}
       distribution: ${{ inputs.distribution }}
-      cache: |
-        ${{ inputs.cache ? 'gradle' : null }}
+      cache: gradle
 
   - name: Disable Gradle daemon and setup console output
     shell: bash
@@ -26,7 +25,6 @@ runs:
 
   - name: Cache gradle build
     uses: inloco/actions-cache@HEAD
-    if: inputs.cache
     with:
       path: |
         **/.gradle
