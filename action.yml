@@ -21,3 +21,14 @@ runs:
     shell: bash
     run: |
       echo "GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.console=plain $GRADLE_OPTS" >> $GITHUB_ENV
+
+  - name: Cache Gradle dependencies
+    uses: inloco/actions-cache@HEAD
+    with:
+      path: |
+        ~/.gradle/caches
+        ~/.gradle/wrapper
+        ~/.m2/repository
+      key: ${{ runner.os }}-dependencies-v1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/pom.xml') }}
+      restore-keys: |
+        ${{ runner.os }}-dependencies-v1-
