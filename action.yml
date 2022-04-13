@@ -20,4 +20,4 @@ runs:
   - name: Disable Gradle daemon and setup console output
     shell: bash
     run: |
-      echo "GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.console=plain $GRADLE_OPTS" >> $GITHUB_ENV
+      echo "GRADLE_OPTS=-Dorg.gradle.caching=true -Dorg.gradle.console=plain $GRADLE_OPTS" >> $GITHUB_ENV
