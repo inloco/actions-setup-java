@@ -36,6 +36,8 @@ runs:
 
   - name: Setup S3-based build cache
     shell: bash
+    env:
+      PROTECTED_CACHE: ${{ github.ref_type == 'tag' || github.event.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     run: |
       mkdir -p ~/.gradle/init.d
       cat <<EOF >> ~/.gradle/init.d/build-cache.gradle
@@ -61,7 +63,7 @@ runs:
                     sessionToken = '${{ steps.aws-credentials.outputs.aws-session-token }}'
                     region = '${{ env.AWS_REGION }}'
                     bucket = 'incognia-github-actions-storage'
-                    prefix = 'build-cache/${{ github.repository }}/'
+                    prefix = '${{ env.PROTECTED_CACHE }}' == 'true' ? 'build-cache-master/${{ steps.aws-credentials.outputs.subject }}/' : 'build-cache/${{ github.repository }}/'
                     push = true
                 }
             }
