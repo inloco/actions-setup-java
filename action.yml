@@ -23,7 +23,6 @@ runs:
       mkdir -p ~/.gradle
       cat <<EOF >> ~/.gradle/gradle.properties
         org.gradle.caching=true
-        org.gradle.configureondemand=true
         org.gradle.console=plain
       EOF
 
